@@ -1,0 +1,84 @@
+---
+version: 1
+kind: application
+meta:
+  name: 'golang-backend:1'
+  brief: 'Golang webservice with Gorilla Mux'
+  source:
+    repoUrl: https://github.com/agilestacks/applications.git
+    repoPath: applications/app-templates
+    dir: .
+    branch: APPLICATIONS_TAG
+    fromEnv: GITHUB_TOKEN
+
+requires:
+  - kubernetes
+  - jenkins
+
+components: []
+
+parameters:
+  - name: application.name
+    value: golang-backend
+  - name: application.description
+    value: Golang webservice with Gorilla Mux
+  - name: application.namespace
+    value: applications
+    env: NAMESPACE
+  - name: application.replicas
+    value: 1
+  - name: application.version
+    value: latest
+  - name: application.port
+    value: 3000
+  - name: application.state.file
+    fromEnv: APP_STATE_FILE
+  - name: application.ingress.host
+    value: '${application.name}.${component.ingress.fqdn}'
+  - name: application.path
+    value: /
+  - name: application.environment.name
+    value: ''
+  - name: application.pipeline.name
+    value: main
+  - name: component.ingress.protocol
+  - name: component.ingress.fqdn
+  - name: component.docker.registry.image
+  - name: component.git.remote
+  - name: component.jenkins.url
+  - name: dns.domain
+    env: DOMAIN_NAME
+  - name: cloud.region
+  - name: terraform.bucket
+    parameters:
+    - name: name
+    - name: region
+
+outputs:
+  - name: application.git.remote
+    value: '${component.git.remote}'
+  - name: application.docker.image
+    value: '${component.docker.registry.image}'
+  - name: application.name
+    value: '${application.name}'
+  - name: application.namespace
+    value: '${application.namespace}'
+  - name: application.fqdn
+    value: '${application.ingress.host}'
+  - name: application.path
+    value: '${application.path}'
+  - name: application.port
+  - name: application.url
+    value: '${component.ingress.protocol}://${application.ingress.host}${application.path}'
+  - name: application.jenkins.pipeline.url
+    value: '${component.jenkins.url}/job/${application.name}/job/${application.pipeline.name}-${application.name}'
+  - name: application.cloud.role
+    value: '${component.jenkins-iam-role.roleArn}'
+  - name: application.promotion.templates
+    value: simple-promote,container-promotion
+  - name: component.docker.registry.kind
+
+templates:
+  files:
+    - templates/*.template
+    - ../kubernetes.yaml.template

@@ -1,0 +1,50 @@
+---
+components:
+- name: github-repository
+  source:
+    repoUrl: https://github.com/agilestacks/applications.git
+    repoPath: applications/components/github-repository
+    dir: components/github-repository
+    branch: APPLICATIONS_TAG
+    fromEnv: GITHUB_TOKEN
+
+lifecycle:
+  order:
+    - github-repository
+
+parameters:
+- name: application.git.kind
+  value: github
+
+- name: component.github
+  parameters:
+  - name: token
+    fromEnv: COMPONENT_GITHUB_TOKEN
+    default: token
+  - name: repository.organization
+    kind: user
+  - name: repository.name
+    value: golang-backend
+  - name: webhook.name
+    value: github
+  - name: webhook.events.json
+    value: '["push"]'
+  - name: repository.description
+    value: ${application.description}
+
+- name: component.git
+  parameters:
+  - name: remote
+  - name: organization
+    value: ${component.github.repository.organization}
+  - name: token
+    value: ${component.github.token}
+
+outputs:
+- name: application.git.remote
+  value: ${component.git.remote}
+- name: application.git.user
+  value: ${component.git.organization}
+- name: application.git.kind
+  values: ${application.git.kind}
+

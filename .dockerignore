@@ -1,0 +1,9 @@
+.editorconfig
+.gitignore
+.dockerignore
+.git
+Dockerfile
+Jenkinsfile
+kubernetes.yaml
+*.template
+hub.yaml

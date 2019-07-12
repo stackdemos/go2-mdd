@@ -1,0 +1,24 @@
+---
+components:
+- name: ecr
+  source:
+    repoUrl: https://github.com/agilestacks/components.git
+    repoPath: components/ecr
+    dir: components/ecr
+    branch: COMPONENTS_TAG
+    fromEnv: GITHUB_TOKEN
+
+lifecycle:
+  order:
+    - ecr
+
+parameters:
+- name: application.ecr.path
+  value: ${application.name}
+- name: component.ecr
+  parameters:
+  - name: name
+    value: '${dns.domain}/${application.ecr.path}'
+
+- name: component.docker.registry.kind
+  value: ecr

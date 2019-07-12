@@ -1,0 +1,19 @@
+---
+components:
+- name: jenkins-iam-role
+  source:
+    repoUrl: https://github.com/agilestacks/applications.git
+    repoPath: applications/components/jenkins-iam-role
+    dir: components/jenkins-iam-role
+    branch: APPLICATIONS_TAG
+    fromEnv: GITHUB_TOKEN
+
+lifecycle:
+  order:
+    - jenkins-iam-role
+
+parameters:
+- name: cloud.role.worker
+- name: component.jenkins-iam-role.name
+  value: '${dns.domain}/${application.name}'
+- name: component.jenkins-iam-role.roleArn

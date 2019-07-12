@@ -1,0 +1,50 @@
+---
+components:
+- name: bitbucket-repository
+  source:
+    repoUrl: https://github.com/agilestacks/applications.git
+    repoPath: applications/components/bitbucket-repository
+    dir: components/bitbucket-repository
+    branch: APPLICATIONS_TAG
+    fromEnv: GITHUB_TOKEN
+
+lifecycle:
+  order:
+    - bitbucket-repository
+
+parameters:
+  - name: application.git.kind
+    value: bitbucket
+
+  - name: component.bitbucket
+    parameters:
+    - name: user.name
+      kind: user
+    - name: project.description
+      value: ${application.description}
+    - name: repository.name
+      value: golang-backend
+    - name: project.key
+      empty: allow
+    - name: team.name
+      empty: allow
+    - name: token
+      fromEnv: COMPONENT_BITBUCKET_TOKEN
+    - name: project.private
+      value: true
+
+  - name: component.git
+    parameters:
+    - name: remote
+    - name: organization
+      value: ${component.bitbucket.user.name}
+    - name: token
+      value: ${component.bitbucket.token}
+
+outputs:
+- name: application.git.remote
+  value: ${component.git.remote}
+- name: application.git.user
+  value: ${component.git.organization}
+- name: application.git.kind
+  values: ${application.git.kind}

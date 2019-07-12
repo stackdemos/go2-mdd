@@ -1,0 +1,57 @@
+---
+components:
+- name: gitlab-repository
+  source:
+    repoUrl: https://github.com/agilestacks/applications.git
+    repoPath: applications/components/gitlab-repository
+    dir: components/gitlab-repository
+    branch: APPLICATIONS_TAG
+    fromEnv: GITHUB_TOKEN
+
+lifecycle:
+  order:
+    - gitlab-repository
+
+parameters:
+- name: application.gitlab.project.name
+- name: application.gitlab.project.path
+- name: application.git.kind
+  value: gitlab
+
+- name: component.gitlab
+  parameters:
+  - name: token
+    fromEnv: COMPONENT_GITLAB_TOKEN
+    empty: allow
+  - name: namespace
+  - name: project.id
+    empty: allow
+  - name: project.name
+    value: ${application.gitlab.project.name}
+    kind: link
+  - name: project.path
+    value: ${application.gitlab.project.path}
+    kind: link
+  - name: project.visibility
+    value: public
+  - name: project.description
+    value: ${application.description}
+
+- name: component.git
+  parameters:
+  - name: remote
+  - name: user.name
+    value: Super Hub
+  - name: user.email
+    value: support@agilestacks.com
+  - name: organization
+    value: gitlab
+  - name: token
+    value: ${component.gitlab.token}   
+
+
+outputs:
+- name: application.git.kind
+  value: ${application.git.kind}
+- name: application.git.remote
+  value: ${component.git.remote}

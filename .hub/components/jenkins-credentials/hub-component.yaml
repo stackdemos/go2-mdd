@@ -1,0 +1,53 @@
+---
+version: 1
+kind: component
+meta:
+  name: jenkins-credentials
+  brief: Jenkins credentials management
+  source:
+    dir: ../../components/jenkins-credentials
+
+requires:
+- kubernetes
+# Should it require Jenkins or how should it be provided
+# - jenkins
+
+provides:
+- jenkins-credentials
+
+parameters:
+- name: dns.domain
+  env: DOMAIN_NAME
+- name: component.jenkins-credentials
+  parameters:
+  - name: name
+  - name: description
+    empty: allow
+  - name: namespace
+    value: jenkins
+    env: NAMESPACE
+  - name: scope
+    value: global
+  - name: kind
+    value: username-password
+    env: CREDENTIALS_KIND
+
+  - name: username
+    empty: allow
+  - name: password
+    empty: allow
+
+  - name: pullSecret
+    empty: allow
+    parameters:
+    - name: name
+      env: PULL_SECRET_NAME
+    - name: namespace
+      env: PULL_SECRET_NAMESPACE
+
+templates:
+  files:
+  - "templates/*.template"
+
+outputs:
+- name: component.jenkins-credentials.name

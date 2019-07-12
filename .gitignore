@@ -1,0 +1,14 @@
+.DS_Store
+.hub/templates/*.yaml
+.hub/templates/*.json
+.hub/hub.elaborate
+.hub/hub.state
+.terraform
+*.tfplan
+kubernetes.yaml
+app
+vendor
+junit.xml
+
+.idea/*
+*.iml

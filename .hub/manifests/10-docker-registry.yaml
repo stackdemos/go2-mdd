@@ -1,0 +1,79 @@
+---
+components:
+- name: pull-secret
+  source:
+    repoUrl: https://github.com/agilestacks/applications.git
+    repoPath: applications/components/pull-secret
+    dir: components/pull-secret
+    branch: APPLICATIONS_TAG
+    fromEnv: GITHUB_TOKEN
+- name: jenkins-credentials
+  source:
+    repoUrl: https://github.com/agilestacks/applications.git
+    repoPath: applications/components/jenkins-credentials
+    dir: components/jenkins-credentials
+    branch: APPLICATIONS_TAG
+    fromEnv: GITHUB_TOKEN
+
+lifecycle:
+  order:
+    - pull-secret
+    - jenkins-credentials
+
+parameters:
+- name: cloud.region
+- name: terraform.bucket
+  parameters:
+  - name: name
+  - name: region
+
+- name: application.docker-registry
+  parameters:
+  - name: url
+  - name: username
+    empty: allow
+  - name: password
+    empty: allow
+  - name: email
+    empty: allow
+  - name: image.url
+
+- name: component.docker.registry.kind
+  value: dockerregistry
+
+- name: component.docker
+  kind: link
+  parameters:
+  - name: image
+    value: ${application.docker-registry.image.url}
+  - name: docker.auth.host
+    value: ${application.docker-registry.url}
+  - name: docker.auth.basic.username
+    value: ${application.docker-registry.username}
+- name: component.docker.docker.auth.basic.password
+  fromEnv: APPLICATION_DOCKER-REGISTRY_PASSWORD
+
+- name: component.pullSecret
+  kind: link
+  parameters:
+  - name: name
+    value: ${application.name}-regcred
+  - name: namespace
+    value: ${application.namespace}
+
+- name: component.jenkins-credentials
+  parameters:
+  - name: name
+    value: ${application.name}-credentials
+  - name: description
+    value: "Docker registry authorization for ${application.name}"
+  - name: username
+    value: ${application.docker-registry.username}
+  - name: password
+    fromEnv: APPLICATION_DOCKER-REGISTRY_PASSWORD
+outputs:
+- name: application.pullSecret.name
+  value: '${component.pullSecret.name}'
+- name: application.pullSecret.namespace
+  value: '${component.pullSecret.namespace}'
+- name: component.jenkins-credentials.name

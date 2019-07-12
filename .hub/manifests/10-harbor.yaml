@@ -1,0 +1,60 @@
+---
+components:
+- name: jenkins-credentials
+  source:
+    repoUrl: https://github.com/agilestacks/applications.git
+    repoPath: applications/components/jenkins-credentials
+    dir: components/jenkins-credentials
+    branch: APPLICATIONS_TAG
+    fromEnv: GITHUB_TOKEN
+
+lifecycle:
+  order:
+    - jenkins-credentials
+
+parameters:
+- name: cloud.region
+- name: terraform.bucket
+  parameters:
+  - name: name
+  - name: region
+
+- name: application.docker-registry
+  parameters:
+  - name: image.url
+  - name: serviceUrl
+
+- name: component.docker.registry.kind
+  value: harbor
+
+- name: component.docker
+  kind: link
+  parameters:
+  - name: image
+    value: ${application.docker-registry.image.url}
+  - name: registry.server
+    value: ${application.docker-registry.url}
+
+- name: application.pullSecret
+  parameters:
+  - name: namespace
+    value: harbor
+  - name: name
+
+- name: component.jenkins-credentials
+  parameters:
+  - name: name
+    value: ${application.name}-credentials
+  - name: description
+    value: "Docker registry authorization for ${application.name}"
+  - name: pullSecret
+    parameters:
+    - name: name
+      value: ${application.pullSecret.name}
+    - name: namespace
+      value: ${application.pullSecret.namespace}
+
+outputs:
+- name: application.pullSecret.name
+- name: application.pullSecret.namespace
+- name: component.jenkins-credentials.name
